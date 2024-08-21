@@ -5,9 +5,9 @@ using Enemies;
 
 namespace Spawning
 {
-    public class EnemySpawner
+    public class EnemySpawner: MonoBehaviour
     {
-        public List<EnemyBase> spawnedEnemies { get; private set; } = new List<EnemyBase>();
+        public List<EnemyBase> SpawnedEnemies { get; private set; } = new List<EnemyBase>();
 
         /// <summary>
         /// Place a single <see cref="EnemyBase"/> in the world
@@ -26,7 +26,7 @@ namespace Spawning
         private void SpawnGroup(SpawnInstruction spawnInstruction)
         {
             //Start the spawn coroutine
-            Debug.LogError("Not Implemented");
+            StartCoroutine(SpawnGroupRoutine(spawnInstruction));
         }
 
         /// <summary>
@@ -36,15 +36,15 @@ namespace Spawning
         /// <returns></returns>
         private IEnumerator SpawnGroupRoutine(SpawnInstruction spawnInstruction)
         {
-            yield return new WaitForSeconds(spawnInstruction.delayBefore);
+            yield return new WaitForSeconds(spawnInstruction.DelayBefore);
 
-            for (int i = 0; i < spawnInstruction.enemiesToSpawn.Count; i++)
+            for (int i = 0; i < spawnInstruction.EnemiesToSpawn.Count; i++)
             {
-                SpawnSingle(spawnInstruction.enemiesToSpawn[i]);
-                yield return new WaitForSeconds(spawnInstruction.delayBetween);
+                SpawnSingle(spawnInstruction.EnemiesToSpawn[i]);
+                yield return new WaitForSeconds(spawnInstruction.DelayBetween);
             }
 
-            yield return new WaitForSeconds(spawnInstruction.delayAfter);
+            yield return new WaitForSeconds(spawnInstruction.DelayAfter);
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace Spawning
         private void SpawnWave(WaveInstruction waveInstruction)
         {
             //Start the wave coroutine
-            Debug.LogError("Not Implemented");
+            StartCoroutine(SpawnWaveRoutine(waveInstruction));
         }
 
         /// <summary>
@@ -63,14 +63,14 @@ namespace Spawning
         /// <param name="waveInstruction">The wave instruction to be followed</param>
         private IEnumerator SpawnWaveRoutine(WaveInstruction waveInstruction)
         {
-            yield return new WaitForSeconds(waveInstruction.delayBefore);
+            yield return new WaitForSeconds(waveInstruction.DelayBefore);
 
-            for (int i = 0; i < waveInstruction.spawnInstructions.Count; i++)
+            for (int i = 0; i < waveInstruction.SpawnInstructions.Count; i++)
             {
-                SpawnGroup(waveInstruction.spawnInstructions[i]);
+                SpawnGroup(waveInstruction.SpawnInstructions[i]);
             }
 
-            yield return new WaitForSeconds(waveInstruction.delayAfter);
+            yield return new WaitForSeconds(waveInstruction.DelayAfter);
         }
     }
 }
