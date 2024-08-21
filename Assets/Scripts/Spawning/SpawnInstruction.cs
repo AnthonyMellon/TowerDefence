@@ -1,17 +1,22 @@
 using System.Collections.Generic;
+using Enemies;
 
-public class SpawnInstruction
+namespace Spawning
 {
-    public List<EnemyBase> enemiesToSpawn { get; private set; }
-    public float delayBefore { get; private set; }
-    public float delayAfter { get; private set; }
-    public float delayBetween { get; private set; }
-
-    public SpawnInstruction(List<EnemyBase> enemiesToSpawn, float delayBefore = 0, float delayAfter = 0, float delayBetween = 0)
+    public class SpawnInstruction
     {
-        this.enemiesToSpawn = enemiesToSpawn;
-        this.delayBefore = delayBefore;
-        this.delayAfter = delayAfter;
-        this.delayBetween = delayBetween;
+        public List<EnemyBase> enemiesToSpawn { get; private set; }
+        public float delayBefore { get; private set; }
+        public float delayAfter { get; private set; }
+        public float delayBetween { get; private set; }
+
+        public SpawnInstruction(List<EnemyBase> enemiesToSpawn, float delayBefore = 0, float delayAfter = 0, float delayBetween = 0)
+        {
+            this.enemiesToSpawn = enemiesToSpawn;
+            this.delayBefore = delayBefore;
+            this.delayAfter = delayAfter;
+            this.delayBetween = delayBetween;
+        }
     }
 }
+

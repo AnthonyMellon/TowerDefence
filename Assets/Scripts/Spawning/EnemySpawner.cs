@@ -1,75 +1,78 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
-using UnityEngine.UIElements;
+using Enemies;
 
-public class EnemySpawner
+namespace Spawning
 {
-    public List<EnemyBase> spawnedEnemies { get; private set; } = new List<EnemyBase>();
-
-    /// <summary>
-    /// Place a single <see cref="EnemyBase"/> in the world
-    /// </summary>
-    /// <param name="enemyToSpawn">The enemy to be spawned</param>
-    private void SpawnSingle(EnemyBase enemyToSpawn)
+    public class EnemySpawner
     {
-        //Place in world
-        Debug.LogError("Not Implemented");
-    }
+        public List<EnemyBase> spawnedEnemies { get; private set; } = new List<EnemyBase>();
 
-    /// <summary>
-    /// Follow a <see cref="SpawnInstruction"/>, spawning a group of enemies
-    /// </summary>
-    /// <param name="spawnInstruction">The spawn instruction to be followed</param>
-    private void SpawnGroup(SpawnInstruction spawnInstruction)
-    {
-        //Start the spawn coroutine
-        Debug.LogError("Not Implemented");
-    }
-
-    /// <summary>
-    /// Follow a <see cref="SpawnInstruction"/>, spawning a group of enemies
-    /// </summary>
-    /// <param name="spawnInstruction">The spawn instruction to be followed</param>
-    /// <returns></returns>
-    private IEnumerator SpawnGroupRoutine(SpawnInstruction spawnInstruction)
-    {
-        yield return new WaitForSeconds(spawnInstruction.delayBefore);
-
-        for(int i = 0; i < spawnInstruction.enemiesToSpawn.Count; i++)
+        /// <summary>
+        /// Place a single <see cref="EnemyBase"/> in the world
+        /// </summary>
+        /// <param name="enemyToSpawn">The enemy to be spawned</param>
+        private void SpawnSingle(EnemyBase enemyToSpawn)
         {
-            SpawnSingle(spawnInstruction.enemiesToSpawn[i]);
-            yield return new WaitForSeconds(spawnInstruction.delayBetween);
+            //Place in world
+            Debug.LogError("Not Implemented");
         }
 
-        yield return new WaitForSeconds(spawnInstruction.delayAfter);
-    }
-
-    /// <summary>
-    /// Follow a <see cref="WaveInstruction"/>, spawning a wave of enemies
-    /// </summary>
-    /// <param name="waveInstruction">The wave instruciton to be followed</param>
-    private void SpawnWave(WaveInstruction waveInstruction)
-    {
-        //Start the wave coroutine
-        Debug.LogError("Not Implemented");
-    }
-
-    /// <summary>
-    /// Follow a <see cref="WaveInstruction"/>, spawning a wave of enemies
-    /// </summary>
-    /// <param name="waveInstruction">The wave instruction to be followed</param>
-    private IEnumerator SpawnWaveRoutine(WaveInstruction waveInstruction)
-    {
-        yield return new WaitForSeconds(waveInstruction.delayBefore);
-
-        for(int i = 0; i < waveInstruction.spawnInstructions.Count; i++)
+        /// <summary>
+        /// Follow a <see cref="SpawnInstruction"/>, spawning a group of enemies
+        /// </summary>
+        /// <param name="spawnInstruction">The spawn instruction to be followed</param>
+        private void SpawnGroup(SpawnInstruction spawnInstruction)
         {
-            SpawnGroup(waveInstruction.spawnInstructions[i]);
+            //Start the spawn coroutine
+            Debug.LogError("Not Implemented");
         }
 
-        yield return new WaitForSeconds(waveInstruction.delayAfter);
+        /// <summary>
+        /// Follow a <see cref="SpawnInstruction"/>, spawning a group of enemies
+        /// </summary>
+        /// <param name="spawnInstruction">The spawn instruction to be followed</param>
+        /// <returns></returns>
+        private IEnumerator SpawnGroupRoutine(SpawnInstruction spawnInstruction)
+        {
+            yield return new WaitForSeconds(spawnInstruction.delayBefore);
+
+            for (int i = 0; i < spawnInstruction.enemiesToSpawn.Count; i++)
+            {
+                SpawnSingle(spawnInstruction.enemiesToSpawn[i]);
+                yield return new WaitForSeconds(spawnInstruction.delayBetween);
+            }
+
+            yield return new WaitForSeconds(spawnInstruction.delayAfter);
+        }
+
+        /// <summary>
+        /// Follow a <see cref="WaveInstruction"/>, spawning a wave of enemies
+        /// </summary>
+        /// <param name="waveInstruction">The wave instruciton to be followed</param>
+        private void SpawnWave(WaveInstruction waveInstruction)
+        {
+            //Start the wave coroutine
+            Debug.LogError("Not Implemented");
+        }
+
+        /// <summary>
+        /// Follow a <see cref="WaveInstruction"/>, spawning a wave of enemies
+        /// </summary>
+        /// <param name="waveInstruction">The wave instruction to be followed</param>
+        private IEnumerator SpawnWaveRoutine(WaveInstruction waveInstruction)
+        {
+            yield return new WaitForSeconds(waveInstruction.delayBefore);
+
+            for (int i = 0; i < waveInstruction.spawnInstructions.Count; i++)
+            {
+                SpawnGroup(waveInstruction.spawnInstructions[i]);
+            }
+
+            yield return new WaitForSeconds(waveInstruction.delayAfter);
+        }
     }
 }
+
+
