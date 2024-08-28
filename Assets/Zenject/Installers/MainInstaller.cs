@@ -1,14 +1,15 @@
 using Enemies;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 using Zenject;
 
 public class MainInstaller : MonoInstaller
 {
-    [SerializeField] private Enemy _enemyBase;
+    //Entities
+    [SerializeField] private Enemy _enemy;
 
     public override void InstallBindings()
-    {        
-        Container.BindFactory<EnemyStats, Enemy, Enemy.Factory>().FromComponentInNewPrefab(_enemyBase).AsSingle();
+    {
+        //Entities
+        Container.BindFactory<EnemyStats, Path, Enemy, Enemy.Factory>().FromComponentInNewPrefab(_enemy).AsSingle();
     }
 }

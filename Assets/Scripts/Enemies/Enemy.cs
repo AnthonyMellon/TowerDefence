@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using UnityEngine;
 using Zenject;
 
@@ -10,21 +9,26 @@ namespace Enemies
         public EnemyStats CurrStats { get; private set; }
 
         private EnemyStatBroker _statBroker;
+        private Path _path;
+        private Vector2 _currPoint;
+        private Vector2? _nextPoint;
+        private int _currPointIndex;
+        private float _progressTowardsNextPoint;
 
         [SerializeField]
         private SpriteRenderer _spriteRenderer;
 
         [Inject]
-        private void Initialise(EnemyStats stats)
+        private void Initialise(EnemyStats stats, Path path)
         {
             SetMaxStats(stats, true);
             _statBroker = new EnemyStatBroker();
-
-            Debug.Log($"I exist! {MaxStats}");
+            _path = path;
         }
 
         private void Start()
         {
+            SetupOnPath();
 
             //Temp but kinda cool
             _spriteRenderer.color = new Color(
@@ -36,7 +40,63 @@ namespace Enemies
 
         private void Update()
         {
-            transform.Translate(new Vector3(CurrStats.stats[EnemyStats.StatTypes.Speed] / 1000f, 0, 0));
+            Move();
+        }
+
+        private void SetupOnPath()
+        {
+            _currPointIndex = 0;
+            _currPoint = _path.GetFirstPoint();
+            _nextPoint = _path.GetNextPoint(0);
+            transform.position = _path.GetFirstPoint();
+        }
+
+        private void OnReachPoint()
+        {
+            if(_nextPoint != null) //If there is another point to head towards
+            {
+                _currPointIndex++;
+                _progressTowardsNextPoint = 0;
+
+                _currPoint = _nextPoint.Value;
+                _nextPoint = _path.GetNextPoint(_currPointIndex);
+            }
+            
+            
+            if(_nextPoint == null)
+            {
+                OnEscape();
+            }
+        }
+
+        private void Move()
+        {
+            if (_nextPoint == null) return; //There is no point to move to
+
+            _progressTowardsNextPoint += Time.deltaTime * CurrStats.stats[EnemyStats.StatTypes.Speed];
+            transform.position = Vector2.Lerp(_currPoint, _nextPoint.Value, _progressTowardsNextPoint);
+
+            if (_progressTowardsNextPoint >= 1) OnReachPoint();
+        }
+
+        private void OnEscape()
+        {
+            //Remove lives
+            Debug.Log("I escaped!");
+
+            Kill();
+        }
+
+        private void OnDeath()
+        {
+            //Add money
+
+            Kill();
+        }
+
+        private void Kill()
+        {
+            Destroy(gameObject);
         }
 
         private void SetMaxStats(EnemyStats stats, bool setCurrStats = false)
@@ -52,7 +112,7 @@ namespace Enemies
             }
         }
 
-        public class Factory : PlaceholderFactory<EnemyStats, Enemy> { };
+        public class Factory : PlaceholderFactory<EnemyStats, Path, Enemy> { };
     }
 }
 

@@ -13,16 +13,16 @@ public class WaveManager
     private void Initialise(Spawner spawner)
     {
         _spawner = spawner;
+        WaveNumber = 97;
     }
 
     public void StartNewWave()
     {
         WaveNumber++;
-        Debug.Log($"<color=green>Wave {WaveNumber}</color>");
 
         //Temp
         Action onComplete = null;
-        if (WaveNumber <= 10) onComplete = StartNewWave;
+        if (WaveNumber <= 100) onComplete = StartNewWave;
 
 
         WaveInstruction waveInstruction = GenerateNewWaveInstruction();
@@ -48,9 +48,9 @@ public class WaveManager
         int minPower = WaveNumber*10;
         int maxPower = WaveNumber*15;
         int numEnemies = WaveNumber + 1;
-        float delayBefore = UnityEngine.Random.Range(0.1f, 1f);
+        float delayBefore = UnityEngine.Random.Range(0.1f, 0.25f);
 
-        return new SpawnInstruction(minPower, maxPower, numEnemies, delayBetween: 0.1f, delayBefore: delayBefore);
+        return new SpawnInstruction(minPower, maxPower, numEnemies, delayBetween: 0f, delayBefore: delayBefore);
     }
 
     public class Factory : PlaceholderFactory<WaveManager> { };

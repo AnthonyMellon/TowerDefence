@@ -4,19 +4,20 @@ using UnityEngine;
 using Enemies;
 using Zenject;
 using System;
-using System.Runtime.CompilerServices;
 
 namespace Spawning
 {
     public class Spawner: MonoBehaviour
     {
         private Enemy.Factory _enemyFactory;
+        private PathManager _pathManager;
         private EnemyStatBroker _statBroker;
 
         [Inject]
-        private void Initialise(Enemy.Factory enemyFactory)
+        private void Initialise(Enemy.Factory enemyFactory, PathManager pathManager)
         {
             _enemyFactory = enemyFactory;
+            _pathManager = pathManager;
 
             _statBroker = new EnemyStatBroker();
         }
@@ -31,9 +32,11 @@ namespace Spawning
         {
             //Place in world
             EnemyStats stats = _statBroker.GetNewStats(power);
-            Enemy spawnedEnemy = _enemyFactory.Create(stats);
-            spawnedEnemy.transform.position = new Vector2(-10, 0);
-        }
+            Path path = _pathManager.GetRandomPath();
+
+            Enemy spawnedEnemy = _enemyFactory.Create(stats, path);
+            spawnedEnemy.transform.SetParent(transform);
+        }       
 
         /// <summary>
         /// Follow a <see cref="SpawnInstruction"/>, spawning a group of enemies
@@ -43,7 +46,6 @@ namespace Spawning
         private IEnumerator SpawnGroupRoutine(SpawnInstruction spawnInstruction)
         {
             yield return new WaitForSeconds(spawnInstruction.DelayBefore);
-            Debug.Log("<color=cyan>Spawning Group!</color>");
 
             for (int i = 0; i < spawnInstruction.NumEnemies; i++)
             {
@@ -60,8 +62,6 @@ namespace Spawning
         /// <param name="waveInstruction">The wave instruciton to be followed</param>
         public void SpawnWave(WaveInstruction waveInstruction, Action OnComplete)
         {
-            Debug.Log("<color=green>Spawning wave!</color>");
-
             //Start the wave coroutine
             StartCoroutine(SpawnWaveRoutine(waveInstruction, OnComplete));
         }
