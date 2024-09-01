@@ -5,30 +5,30 @@ using System.Runtime.CompilerServices;
 using UnityEngine;
 using Zenject;
 
-public class WaveManager
+public class WaveManager : MonoBehaviour
 {
     public int WaveNumber { get; private set; }
-    private Spawner _spawner;
+    private Wave.Factory _waveFactory;
 
     [Inject]
-    private void Initialise(Spawner spawner)
+    private void Initialise(Wave.Factory waveFactory)
     {
-        _spawner = spawner;
+        _waveFactory = waveFactory;
         WaveNumber = 0;
     }
 
-    public void StartNewWave()
+    public void CreateNextWave()
     {
         WaveNumber++;
-        Debug.Log($"Starting wave {WaveNumber}");
+        Debug.Log($"Creating wave {WaveNumber}");
 
         //Temp
         Action onComplete = null;
-        if (WaveNumber <= 100) onComplete = StartNewWave;
+        if (WaveNumber <= 100) onComplete = CreateNextWave;
 
 
         WaveInstruction waveInstruction = GenerateNewWaveInstruction();
-        _spawner.SpawnWave(waveInstruction, onComplete);
+        _waveFactory.Create(waveInstruction, onComplete);
     }
 
     private WaveInstruction GenerateNewWaveInstruction()
@@ -54,6 +54,4 @@ public class WaveManager
 
         return new SpawnInstruction(minPower, maxPower, numEnemies, delayBetween: 0f, delayBefore: delayBefore);
     }
-
-    public class Factory : PlaceholderFactory<WaveManager> { };
 }

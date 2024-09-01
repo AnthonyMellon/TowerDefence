@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f423d21a997def45a8d11852ae332eb, type: 3}
   m_Name: DefaultEnemyConfig
   m_EditorClassIdentifier: 
-  _maxSpeed: 10
-  _speedModifier: 0.01
+  _maxSpeed: 15
+  _speedModifier: 0.0051

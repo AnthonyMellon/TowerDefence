@@ -7,27 +7,47 @@ using System;
 
 namespace Spawning
 {
-    public class Spawner: MonoBehaviour
+    public class Wave : MonoBehaviour
     {
+        private WaveInstruction _waveInstruction;
+        private Action _onComplete;
         private Enemy.Factory _enemyFactory;
         private PathManager _pathManager;
         private EnemyStatBroker _statBroker;
 
+        private bool _allEnemiesSpawned;
+        public List<Enemy> SpawnedEnemies { get; private set; } = new List<Enemy>();
+
         [Inject]
-        private void Initialise(Enemy.Factory enemyFactory, PathManager pathManager, EnemyStatBroker statBroker)
+        private void Initialise(WaveInstruction waveInstruction, Action onComplete, Enemy.Factory enemyFactory, PathManager pathManager, EnemyStatBroker statBroker)
         {
+            _waveInstruction = waveInstruction;
+            _onComplete = onComplete;
             _enemyFactory = enemyFactory;
             _pathManager = pathManager;
             _statBroker = statBroker;
         }
 
-        public List<Enemy> SpawnedEnemies { get; private set; } = new List<Enemy>();
+        private void Start()
+        {
+            StartCoroutine(SpawnWaveRoutine(_waveInstruction));
+        }
+
+        private void Update()
+        {
+            if(_allEnemiesSpawned && SpawnedEnemies.Count == 0)
+            {
+                Debug.Log("Wave Over!");
+                _onComplete.Invoke();
+                Destroy(gameObject);
+            }
+        }
 
         /// <summary>
         /// Place a single <see cref="Enemy"/> in the world
         /// </summary>
         /// <param name="entityToSpawn">The entity to be spawned</param>
-        private void SpawnSingle(int power)
+        private void SpawnEnemy(int power)
         {
             //Place in world
             EnemyStats stats = _statBroker.GetNewStats(power);
@@ -35,7 +55,14 @@ namespace Spawning
 
             Enemy spawnedEnemy = _enemyFactory.Create(stats, path);
             spawnedEnemy.transform.SetParent(transform);
+            spawnedEnemy.OnDelete += HandleEnemyDelete;
+            SpawnedEnemies.Add(spawnedEnemy);
         }       
+
+        private void HandleEnemyDelete(Enemy deletedEnemy)
+        {
+            SpawnedEnemies.Remove(deletedEnemy);
+        }
 
         /// <summary>
         /// Follow a <see cref="SpawnInstruction"/>, spawning a group of enemies
@@ -48,7 +75,7 @@ namespace Spawning
 
             for (int i = 0; i < spawnInstruction.NumEnemies; i++)
             {
-                SpawnSingle(spawnInstruction.EnemyPower);
+                SpawnEnemy(spawnInstruction.EnemyPower);
                 yield return new WaitForSeconds(spawnInstruction.DelayBetween);
             }
 
@@ -58,26 +85,18 @@ namespace Spawning
         /// <summary>
         /// Follow a <see cref="WaveInstruction"/>, spawning a wave of enemies
         /// </summary>
-        /// <param name="waveInstruction">The wave instruciton to be followed</param>
-        public void SpawnWave(WaveInstruction waveInstruction, Action OnComplete)
-        {
-            //Start the wave coroutine
-            StartCoroutine(SpawnWaveRoutine(waveInstruction, OnComplete));
-        }
-
-        /// <summary>
-        /// Follow a <see cref="WaveInstruction"/>, spawning a wave of enemies
-        /// </summary>
         /// <param name="waveInstruction">The wave instruction to be followed</param>
-        private IEnumerator SpawnWaveRoutine(WaveInstruction waveInstruction, Action OnComplete)
+        private IEnumerator SpawnWaveRoutine(WaveInstruction waveInstruction, Action OnComplete = null)
         {
             for (int i = 0; i < waveInstruction.SpawnInstructions.Count; i++)
             {
                 yield return StartCoroutine(SpawnGroupRoutine(waveInstruction.SpawnInstructions[i]));
             }
-
-            OnComplete?.Invoke();
+          
+            _allEnemiesSpawned = true;
         }
+
+        public class Factory : PlaceholderFactory<WaveInstruction, Action, Wave> { };
     }
 }
 

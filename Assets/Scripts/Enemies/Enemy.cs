@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using Zenject;
 
@@ -13,6 +14,9 @@ namespace Enemies
         private Vector2? _nextPoint;
         private int _currPointIndex;
         private float _progressTowardsNextPoint;
+
+        public delegate void OnDeleteHandler(Enemy enemy);
+        public event OnDeleteHandler OnDelete;
 
         [SerializeField]
         private SpriteRenderer _spriteRenderer;
@@ -83,17 +87,18 @@ namespace Enemies
         private void OnEscape()
         {
             //Remove lives
-            Kill();
+            Delete();
         }
 
         private void OnDeath()
         {
             //Add money
-            Kill();
+            Delete();
         }
 
-        private void Kill()
+        private void Delete()
         {
+            OnDelete.Invoke(this);
             Destroy(gameObject);
         }
 

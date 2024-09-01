@@ -6,17 +6,16 @@ using Zenject;
 
 public class GameManager : MonoBehaviour
 {
-    private WaveManager.Factory _waveManagerFactory;
+    private WaveManager _waveManager;
 
     [Inject]
-    private void Initialise(WaveManager.Factory waveManagerFactroy)
+    private void Initialise(WaveManager waveManager)
     {
-        _waveManagerFactory = waveManagerFactroy;
+        _waveManager = waveManager;
     }
 
     private void Start()
-    {
-        WaveManager waveManager = _waveManagerFactory.Create();
-        waveManager.StartNewWave();
+    {        
+        _waveManager.CreateNextWave();
     }
 }
