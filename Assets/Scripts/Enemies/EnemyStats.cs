@@ -1,29 +1,38 @@
 using Constants;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEditor.Rendering;
 using UnityEngine;
+using Zenject;
 
 namespace Enemies
 {
     public class EnemyStats
     {
-        public enum StatTypes
+        private EnemyConfig _config;
+
+        public int Health { get; private set; }
+        public int Armour { get; private set; }
+        private int _realSpeed;
+        public float Speed
         {
-            Health,
-            Armour,
-            Speed
+            get
+            {
+                float speed = _realSpeed * _config.SpeedModifier;
+                return speed <= _config.MaxSpeed ? speed : _config.MaxSpeed; ;                
+            }
+            private set
+            {
+                Debug.LogWarning("something is trying to set real speed, this does nothing");
+            }
         }
 
-        public Dictionary<StatTypes, int> stats { get; private set; }
-
-        public EnemyStats(int health, int armour, int speed)
+        public EnemyStats(int health, int armour, int speed, EnemyConfig config)
         {
-            stats = new Dictionary<StatTypes, int>
-            {
-                { StatTypes.Health, health },
-                { StatTypes.Armour, armour },
-                { StatTypes.Speed, speed }
-            };
+            Health = health;
+            Armour = armour;
+            _realSpeed = speed;
+            _config = config;
         }
 
         public EnemyStats(EnemyStats statsToCopy)
@@ -33,36 +42,25 @@ namespace Enemies
 
         public void SetValues(EnemyStats statsToCopy)
         {
-            if (stats == null) stats = new Dictionary<StatTypes, int>();
-
-            foreach(KeyValuePair<StatTypes, int> entry in statsToCopy.stats)
-            {
-                if (stats.ContainsKey(entry.Key))
-                {
-                    stats[entry.Key] = entry.Value;
-
-                }
-                else
-                {
-                    stats.Add(entry.Key, entry.Value);
-                }
-            }
+            Health = statsToCopy.Health;
+            Armour = statsToCopy.Armour;
+            _realSpeed = statsToCopy._realSpeed;
+            _config = statsToCopy._config;
         }
 
         public int GetTotalPower()
         {
-            int totalPower = 0;
-            foreach(KeyValuePair<StatTypes, int> stat in stats)
-            {
-                totalPower += stat.Value;
-            }
+            return Health + Armour + _realSpeed;           
+        }
 
-            return totalPower;
+        public int GetRealSpeed()
+        {
+            return _realSpeed;
         }
 
         public override string ToString()
         {
-            return $"H:{stats[StatTypes.Health]}, A:{stats[StatTypes.Armour]}, S:{stats[StatTypes.Speed]}, T:{GetTotalPower()}";
+            return $"H:{Health}, A:{Armour}, S:{_realSpeed}, T:{GetTotalPower()}";
         }
     }
 }

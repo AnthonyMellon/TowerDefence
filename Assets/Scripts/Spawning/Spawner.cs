@@ -14,12 +14,11 @@ namespace Spawning
         private EnemyStatBroker _statBroker;
 
         [Inject]
-        private void Initialise(Enemy.Factory enemyFactory, PathManager pathManager)
+        private void Initialise(Enemy.Factory enemyFactory, PathManager pathManager, EnemyStatBroker statBroker)
         {
             _enemyFactory = enemyFactory;
             _pathManager = pathManager;
-
-            _statBroker = new EnemyStatBroker();
+            _statBroker = statBroker;
         }
 
         public List<Enemy> SpawnedEnemies { get; private set; } = new List<Enemy>();

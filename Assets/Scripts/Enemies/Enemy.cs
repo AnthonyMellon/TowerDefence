@@ -7,8 +7,7 @@ namespace Enemies
     {
         public EnemyStats MaxStats { get; private set; }
         public EnemyStats CurrStats { get; private set; }
-
-        private EnemyStatBroker _statBroker;
+        
         private Path _path;
         private Vector2 _currPoint;
         private Vector2? _nextPoint;
@@ -22,19 +21,21 @@ namespace Enemies
         private void Initialise(EnemyStats stats, Path path)
         {
             SetMaxStats(stats, true);
-            _statBroker = new EnemyStatBroker();
             _path = path;
+            //_statBroker = statBroker;
         }
 
         private void Start()
         {
+            //Debug.Log($"My speed is {CurrStats.GetRealSpeed()} | {CurrStats.Speed}");
+
             SetupOnPath();
 
             //Temp but kinda cool
             _spriteRenderer.color = new Color(
-                CurrStats.stats[EnemyStats.StatTypes.Health] / (float)CurrStats.GetTotalPower(),
-                CurrStats.stats[EnemyStats.StatTypes.Armour] / (float)CurrStats.GetTotalPower(),
-                CurrStats.stats[EnemyStats.StatTypes.Speed] / (float)CurrStats.GetTotalPower()
+                CurrStats.Health / (float)CurrStats.GetTotalPower(),
+                CurrStats.Armour / (float)CurrStats.GetTotalPower(),
+                CurrStats.Speed / (float)CurrStats.GetTotalPower()
             );
         }
 
@@ -73,7 +74,7 @@ namespace Enemies
         {
             if (_nextPoint == null) return; //There is no point to move to
 
-            _progressTowardsNextPoint += Time.deltaTime * CurrStats.stats[EnemyStats.StatTypes.Speed];
+            _progressTowardsNextPoint += Time.deltaTime * CurrStats.Speed;
             transform.position = Vector2.Lerp(_currPoint, _nextPoint.Value, _progressTowardsNextPoint);
 
             if (_progressTowardsNextPoint >= 1) OnReachPoint();
@@ -82,15 +83,12 @@ namespace Enemies
         private void OnEscape()
         {
             //Remove lives
-            Debug.Log("I escaped!");
-
             Kill();
         }
 
         private void OnDeath()
         {
             //Add money
-
             Kill();
         }
 

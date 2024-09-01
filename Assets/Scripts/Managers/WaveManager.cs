@@ -1,6 +1,7 @@
 using Spawning;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using Zenject;
 
@@ -13,12 +14,13 @@ public class WaveManager
     private void Initialise(Spawner spawner)
     {
         _spawner = spawner;
-        WaveNumber = 97;
+        WaveNumber = 0;
     }
 
     public void StartNewWave()
     {
         WaveNumber++;
+        Debug.Log($"Starting wave {WaveNumber}");
 
         //Temp
         Action onComplete = null;

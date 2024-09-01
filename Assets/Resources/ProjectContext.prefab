@@ -107,3 +107,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _enemy: {fileID: 4207250269274327661, guid: 09e90f7a2e28d034aa8790964a187369, type: 3}
+  _enemyConfig: {fileID: 11400000, guid: dcbcf9c00cc7e42409ddeb79b0af6109, type: 2}
